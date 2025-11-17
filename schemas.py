@@ -12,9 +12,9 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
-# Example schemas (replace with your own):
+# Example schemas (you can keep or remove if not needed)
 
 class User(BaseModel):
     """
@@ -38,10 +38,32 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# Tutoring app schemas
 
-# Note: The Flames database viewer will automatically:
+class Tutor(BaseModel):
+    """
+    Tutors collection schema
+    Collection name: "tutor"
+    """
+    name: str = Field(..., description="Tutor name")
+    subjects: List[str] = Field(default_factory=list, description="Subjects the tutor teaches")
+    bio: Optional[str] = Field(None, description="Short bio")
+    location: Optional[str] = Field(None, description="Home/base location (city)")
+    photo_url: Optional[str] = Field(None, description="Profile image URL")
+    rating: Optional[float] = Field(None, ge=0, le=5, description="Average rating 0-5")
+
+class Availability(BaseModel):
+    """
+    Availability slots for tutors
+    Collection name: "availability"
+    """
+    tutor_id: str = Field(..., description="Reference to tutor _id as string")
+    date: str = Field(..., description="ISO date e.g., 2025-01-30")
+    time: str = Field(..., description="Time window e.g., 3:00 PM - 5:00 PM")
+    location: str = Field(..., description="Meeting location or area")
+    notes: Optional[str] = Field(None, description="Optional notes for the slot")
+
+# The Flames database viewer will automatically:
 # 1. Read these schemas from GET /schema endpoint
 # 2. Use them for document validation when creating/editing
 # 3. Handle all database operations (CRUD) directly
